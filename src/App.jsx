@@ -1,13 +1,9 @@
 
-import './App.css'
-
 function App() {
 
   return (
     <>
-      <div className="hero">
-        <p>Ricetta</p>
-      </div>
+      <h1>Ricetta</h1>
     </>
   )
 }
