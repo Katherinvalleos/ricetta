@@ -27,7 +27,7 @@ function CategoryPage() {
                 setCategories(categoryData)
                 setRecipesInCategory(recipeData)
             } catch (err) {
-                setError('Kunde inte hämta kategorin just nu.')
+                setError('Kunde inte hÃ¤mta kategorin just nu.')
                 console.error(err)
             } finally {
                 setLoading(false)
@@ -79,7 +79,7 @@ function CategoryPage() {
             <section className="section container">
                 <div className="empty-state">
                     <h1>Kategorin kunde inte hittas</h1>
-                    <p>Den kategori du försökte öppna finns inte i API-datan.</p>
+                    <p>Den kategori du fÃ¶rsÃ¶kte Ã¶ppna finns inte i API-datan.</p>
                     <Link className="button" to="/">
                         Till startsidan
                     </Link>
@@ -96,7 +96,7 @@ function CategoryPage() {
                         <p className="section-heading__eyebrow">Kategori</p>
                         <h1 className="section-heading__title">{category.name}</h1>
                         <p className="section-heading__description">
-                            Här hittar du recept inom kategorin {category.name.toLowerCase()}.
+                            Hï¿½r hittar du recept inom kategorin {category.name.toLowerCase()}.
                         </p>
                         <p className="page-hero__accent">
                             {category.recipeCount} recept i denna kategori.
@@ -114,7 +114,7 @@ function CategoryPage() {
                             compact
                             value={query}
                             onChange={setQuery}
-                            label={`Sök inom ${category.name.toLowerCase()}`}
+                            label={`SÃ¶k inom ${category.name.toLowerCase()}`}
                             placeholder={`Hitta recept i kategorin ${category.name.toLowerCase()}`}
                         />
                     </div>
@@ -124,16 +124,16 @@ function CategoryPage() {
             <RecipeGrid
                 eyebrow="I denna kategori"
                 title={`Recept inom ${category.name.toLowerCase()}`}
-                description="Kategoriurvalet hämtas nu från API:t och filtreras direkt i gränssnittet."
+                description="Kategoriurvalet hÃ¤mtas nu frÃ¥n API:t och filtreras direkt i grÃ¤nssnittet."
                 recipes={filteredRecipes}
-                emptyMessage={`Inga recept i ${category.name.toLowerCase()} matchade den här sökningen just nu.`}
+                emptyMessage={`Inga recept i ${category.name.toLowerCase()} matchade den hÃ¤r sÃ¶kningen just nu.`}
             />
 
             <CategoryList
                 categories={alternateCategories.slice(0, 4)}
                 eyebrow="Fler kategorier"
-                title="Fortsätt utforska det italienska köket"
-                description="De här genvägarna gör det enkelt att hoppa vidare mellan olika kategorier."
+                title="FortsÃ¤tt utforska det italienska kÃ¶ket"
+                description="De hÃ¤r genvÃ¤garna gÃ¶r det enkelt att hoppa vidare mellan olika kategorier."
             />
         </>
     )

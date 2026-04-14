@@ -38,7 +38,7 @@ function RecipePage() {
                     setRelatedRecipes([])
                 }
             } catch (err) {
-                setError('Kunde inte hämta receptet just nu.')
+                setError('Kunde inte hÃ¤mta receptet just nu.')
                 console.error(err)
             } finally {
                 setLoading(false)
@@ -63,7 +63,7 @@ function RecipePage() {
             <section className="section container">
                 <div className="empty-state">
                     <h1>Receptet kunde inte hittas</h1>
-                    <p>Det recept du försökte öppna finns inte i API-datan.</p>
+                    <p>Det recept du fÃ¶rsÃ¶kte Ã¶ppna finns inte i API-datan.</p>
                     <Link className="button" to="/">
                         Till startsidan
                     </Link>
@@ -116,7 +116,7 @@ function RecipePage() {
             <section className="section container recipe-layout">
                 <aside className="recipe-sidebar">
                     <div className="panel">
-                        <p className="section-heading__eyebrow">Kökets noter</p>
+                        <p className="section-heading__eyebrow">KÃ¶kets noter</p>
                         <h2 className="panel__title">Ingredienser</h2>
                         <IngredientList ingredients={recipe.ingredients} />
                     </div>
@@ -126,7 +126,7 @@ function RecipePage() {
                         <div className="detail-list">
                             <div className="detail-list__item">
                                 <span className="detail-list__label">Kategori</span>
-                                <span className="detail-list__value">{primaryCategory || 'Okänd'}</span>
+                                <span className="detail-list__value">{primaryCategory || 'OkÃ¤nd'}</span>
                             </div>
                             <div className="detail-list__item">
                                 <span className="detail-list__label">Pris</span>
@@ -135,7 +135,7 @@ function RecipePage() {
                             <div className="detail-list__item">
                                 <span className="detail-list__label">Betyg</span>
                                 <span className="detail-list__value">
-                                    {recipe.avgRating ? recipe.avgRating : 'Inga betyg ännu'}
+                                    {recipe.avgRating ? recipe.avgRating : 'Inga betyg Ã¤nnu'}
                                 </span>
                             </div>
                         </div>
@@ -144,8 +144,8 @@ function RecipePage() {
 
                 <div className="recipe-content">
                     <section className="panel">
-                        <p className="section-heading__eyebrow">Steg för steg</p>
-                        <h2 className="panel__title">Gör så här</h2>
+                        <p className="section-heading__eyebrow">Steg fÃ¶r steg</p>
+                        <h2 className="panel__title">GÃ¶r sÃ¥ hÃ¤r</h2>
                         <InstructionSteps steps={recipe.instructions} />
                     </section>
 
@@ -156,10 +156,10 @@ function RecipePage() {
 
             <RecipeGrid
                 eyebrow="Liknande recept"
-                title="Fler recept att upptäcka"
-                description="Relaterade recept hämtas nu från API:t och bygger vidare på samma kategori."
+                title="Fler recept att upptÃ¤cka"
+                description="Relaterade recept hÃ¤mtas nu frÃ¥n API:t och bygger vidare pÃ¥ samma kategori."
                 recipes={relatedRecipes}
-                emptyMessage="Fler relaterade recept dyker upp här när receptsamlingen växer."
+                emptyMessage="Fler relaterade recept dyker upp hÃ¤r nÃ¤r receptsamlingen vÃ¤xer."
             />
         </>
     )
