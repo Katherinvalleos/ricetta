@@ -5,8 +5,8 @@ function slugify(text) {
         ?.toLowerCase()
         .trim()
         .replace(/\s+/g, "-")
-        .replace(/[Â‰]/g, "a")
-        .replace(/ˆ/g, "o");
+        .replace(/[√•√§]/g, "a")
+        .replace(/√∂/g, "o");
 }
 
 function normalizeRecipe(recipe) {
@@ -22,7 +22,7 @@ export async function getRecipes() {
     const res = await fetch(`${BASE_URL}/recipes`);
 
     if (!res.ok) {
-        throw new Error("Kunde inte h‰mta recept");
+        throw new Error("Kunde inte h√§mta recept");
     }
 
     const data = await res.json();
@@ -33,7 +33,7 @@ export async function getRecipeById(recipeId) {
     const res = await fetch(`${BASE_URL}/recipes/${recipeId}`);
 
     if (!res.ok) {
-        throw new Error("Kunde inte h‰mta receptet");
+        throw new Error("Kunde inte h√§mta receptet");
     }
 
     const data = await res.json();
