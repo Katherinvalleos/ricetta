@@ -12,7 +12,7 @@ function Footer() {
                 const data = await getCategories()
                 setCategories(data)
             } catch (err) {
-                setError('Kunde inte h�mta kategorier.')
+                setError('Kunde inte hämta kategorier.')
                 console.error(err)
             }
         }

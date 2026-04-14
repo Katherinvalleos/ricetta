@@ -23,7 +23,7 @@ function CommentSection({ comments: initialComments }) {
         event.preventDefault()
 
         if (!form.name.trim() || !form.comment.trim()) {
-            setStatus('Fyll i både namn och kommentar för att visa ett lokalt inlägg.')
+            setStatus('Fyll i bÃ¥de namn och kommentar fÃ¶r att visa ett lokalt inlÃ¤gg.')
             return
         }
 
@@ -35,7 +35,7 @@ function CommentSection({ comments: initialComments }) {
 
         setComments((currentComments) => [previewComment, ...currentComments])
         setForm(initialFormState)
-        setStatus('Kommentaren lades till lokalt för att färhandsvisa gränssnittet.')
+        setStatus('Kommentaren lades till lokalt fÃ¶r att fÃ¶rhandsvisa grÃ¤nssnittet.')
     }
 
     return (
@@ -43,9 +43,9 @@ function CommentSection({ comments: initialComments }) {
             <div className="section-heading section-heading--compact">
                 <div className="section-heading__content">
                     <p className="section-heading__eyebrow">Kommentarer</p>
-                    <h2 className="section-heading__title">Vad säger andra?</h2>
+                    <h2 className="section-heading__title">Vad sÃ¤ger andra?</h2>
                     <p className="section-heading__description">
-                        Formuläret är bara till för gränssnittet just nu och sparar nya kommentarer lokalt i
+                        FormulÃ¤ret Ã¤r bara till fÃ¶r grÃ¤nssnittet just nu och sparar nya kommentarer lokalt i
                         sidan.
                     </p>
                 </div>
@@ -85,7 +85,7 @@ function CommentSection({ comments: initialComments }) {
                             value={form.comment}
                             onChange={handleChange}
                             rows="4"
-                            placeholder="Skriv en kort tanke om smak, uppläggning eller vad du skulle justera."
+                            placeholder="Skriv en kort tanke om smak, upplÃ¤ggning eller vad du skulle justera."
                         />
                     </label>
                 </div>

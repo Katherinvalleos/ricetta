@@ -9,13 +9,13 @@ function RatingStars({ initialRating, reviewCount }) {
         <section className="panel rating-panel">
             <div className="rating-panel__headline">
                 <div>
-                    <p className="section-heading__eyebrow">Betygsförhandsvisning</p>
+                    <p className="section-heading__eyebrow">BetygsfÃ¶rhandsvisning</p>
                     <h2 className="panel__title">Vad tycker du om receptet?</h2>
                 </div>
                 <div className="rating-panel__score">{initialRating.toFixed(1)}</div>
             </div>
 
-            <div className="rating-stars" aria-label="Kontroller för receptbetyg">
+            <div className="rating-stars" aria-label="Kontroller fÃ¶r receptbetyg">
                 {[1, 2, 3, 4, 5].map((value) => {
                     const isActive = value <= (selectedRating || roundedRating)
 
@@ -24,7 +24,7 @@ function RatingStars({ initialRating, reviewCount }) {
                             key={value}
                             className={`rating-stars__button${isActive ? ' is-active' : ''}`}
                             type="button"
-                            aria-label={`Ge ${value} stjärnor`}
+                            aria-label={`Ge ${value} stjÃ¤rnor`}
                             onClick={() => setSelectedRating(value)}
                         >
                             &#9733;
@@ -35,8 +35,8 @@ function RatingStars({ initialRating, reviewCount }) {
 
             <p className="rating-panel__note">
                 {selectedRating > 0
-                    ? `Ditt förhandsbetyg: ${selectedRating} av 5 stjärnor.`
-                    : `${reviewCount} omdömen finns just nu kopplade till receptet i testdatan.`}
+                    ? `Ditt fÃ¶rhandsbetyg: ${selectedRating} av 5 stjÃ¤rnor.`
+                    : `${reviewCount} omdÃ¶men finns just nu kopplade till receptet i testdatan.`}
             </p>
         </section>
     )
