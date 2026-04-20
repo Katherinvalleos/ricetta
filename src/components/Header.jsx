@@ -1,20 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { getCategories, getRecipes } from '../api/recipes'
+import { getRecipes } from '../api/recipes'
+import { buildEditorialCategories, getPrimaryNavigationCategories } from '../config/categories'
 
 function Header() {
-    const [categories, setCategories] = useState([])
     const [recipes, setRecipes] = useState([])
 
     useEffect(() => {
         async function loadHeaderData() {
             try {
-                const [categoryData, recipeData] = await Promise.all([
-                    getCategories(),
-                    getRecipes(),
-                ])
-
-                setCategories(categoryData)
+                const recipeData = await getRecipes()
                 setRecipes(recipeData)
             } catch (err) {
                 console.error('Kunde inte hämta header-data', err)
@@ -24,7 +19,10 @@ function Header() {
         loadHeaderData()
     }, [])
 
-    const spotlightCategories = categories.slice(0, 4)
+    const spotlightCategories = useMemo(() => {
+        return getPrimaryNavigationCategories(buildEditorialCategories(recipes))
+    }, [recipes])
+
     const editorsPick = recipes[0]
 
     return (
@@ -40,10 +38,18 @@ function Header() {
 
                 <nav className="site-nav" aria-label="Primär navigering">
                     <NavLink
+                        end
                         className={({ isActive }) => `site-nav__link${isActive ? ' is-active' : ''}`}
                         to="/"
                     >
                         Hem
+                    </NavLink>
+
+                    <NavLink
+                        className={({ isActive }) => `site-nav__link${isActive ? ' is-active' : ''}`}
+                        to="/categories"
+                    >
+                        Alla kategorier
                     </NavLink>
 
                     {spotlightCategories.map((category) => (

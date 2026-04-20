@@ -3,12 +3,12 @@ import CategoryList from '../components/CategoryList'
 import FeaturedShowcase from '../components/FeaturedShowcase'
 import Hero from '../components/Hero'
 import RecipeGrid from '../components/RecipeGrid'
-import { getCategories, getRecipes } from '../api/recipes'
+import { getRecipes } from '../api/recipes'
+import { buildEditorialCategories, filterRecipesBySearch } from '../config/categories'
 
 function HomePage() {
     const [query, setQuery] = useState('')
     const [recipes, setRecipes] = useState([])
-    const [categories, setCategories] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
 
@@ -18,13 +18,8 @@ function HomePage() {
                 setLoading(true)
                 setError('')
 
-                const [recipeData, categoryData] = await Promise.all([
-                    getRecipes(),
-                    getCategories(),
-                ])
-
+                const recipeData = await getRecipes()
                 setRecipes(recipeData)
-                setCategories(categoryData)
             } catch (err) {
                 setError('Kunde inte hämta recept just nu.')
                 console.error(err)
@@ -36,31 +31,21 @@ function HomePage() {
         loadHomePageData()
     }, [])
 
-    const normalizedQuery = query.trim().toLowerCase()
+    const categories = useMemo(() => {
+        return buildEditorialCategories(recipes)
+    }, [recipes])
 
     const featuredRecipes = useMemo(() => {
         return recipes.slice(0, 3)
     }, [recipes])
 
+    const teaserCategories = useMemo(() => {
+        return categories.slice(0, 3)
+    }, [categories])
+
     const filteredRecipes = useMemo(() => {
-        if (!normalizedQuery) return recipes
-
-        return recipes.filter((recipe) => {
-            const searchableText = [
-                recipe.title,
-                recipe.description,
-                ...(recipe.categories || []),
-                ...(recipe.instructions || []),
-                ...(recipe.ingredients || []).map(
-                    (ingredient) => `${ingredient.name} ${ingredient.amount} ${ingredient.unit}`
-                ),
-            ]
-                .join(' ')
-                .toLowerCase()
-
-            return searchableText.includes(normalizedQuery)
-        })
-    }, [recipes, normalizedQuery])
+        return filterRecipesBySearch(recipes, query, 'all')
+    }, [recipes, query])
 
     const editorialHighlight = featuredRecipes[1] || featuredRecipes[0]
 
@@ -98,7 +83,7 @@ function HomePage() {
                             </h2>
                             <p className="section-heading__description">
                                 Balansen mellan stora bilder, luftiga sektioner och varm palett ger sajten en mer
-                                sammanhällen identitet samtidigt som komponenterna förblir enkla att vidareutveckla.
+                                sammanhållen identitet samtidigt som komponenterna förblir enkla att vidareutveckla.
                             </p>
                         </div>
 
@@ -119,18 +104,21 @@ function HomePage() {
             )}
 
             <CategoryList
-                categories={categories}
+                categories={teaserCategories}
                 eyebrow="Kategorier"
-                title="Hitta rätt stämning för hela den italienska menyn"
-                description="Varje kategori har fått ett tydligare uttryck så att det blir enklare att navigera mellan pasta, förrätter, pizza och desserter."
+                title="Börja i några av Ricettas tydligaste kategorispår"
+                description="Startsidan visar nu bara en mindre teaser, medan hela katalogen har flyttat till en egen destinationssida för bättre navigation och tydligare informationsarkitektur."
+                note={`${categories.length} kategorier totalt`}
+                actionLabel="Se alla kategorier"
+                actionTo="/categories"
             />
 
             <RecipeGrid
-                eyebrow={normalizedQuery ? 'Sökresultat' : 'Fler recept'}
-                title={normalizedQuery ? `Träffar för "${query}"` : 'Fler italienska favoriter'}
+                eyebrow={query.trim() ? 'Sökresultat' : 'Fler recept'}
+                title={query.trim() ? `Träffar för "${query}"` : 'Fler italienska favoriter'}
                 description={
-                    normalizedQuery
-                        ? 'Filtreringen sker nu mot data från API:t så att sökupplevelsen redan känns användbar.'
+                    query.trim()
+                        ? 'Sökningen matchar nu recepttitlar, ingredienser och kategoriord så att resultatet känns mer användbart redan innan den slutliga API-integrationen.'
                         : 'Ett bredare receptflöde för att testa receptkort, rytm och responsivitet över flera typer av rätter.'
                 }
                 recipes={filteredRecipes}

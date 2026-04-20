@@ -1,5 +1,5 @@
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 function SearchBar({
     value,
@@ -10,11 +10,27 @@ function SearchBar({
     buttonLabel = 'Sök',
     scopes = [],
     helperText = '',
+    activeScope,
+    onScopeChange,
 }) {
-    const [activeScope, setActiveScope] = useState(scopes[0]?.label ?? '')
+    const firstScopeKey = scopes[0]?.key ?? scopes[0]?.label ?? ''
+    const [internalScope, setInternalScope] = useState(firstScopeKey)
 
-    const activeScopeConfig = scopes.find((scope) => scope.label === activeScope)
+    const selectedScope = activeScope ?? internalScope
+
+    const activeScopeConfig = useMemo(() => {
+        return scopes.find((scope) => (scope.key ?? scope.label) === selectedScope) ?? scopes[0]
+    }, [scopes, selectedScope])
+
     const resolvedPlaceholder = activeScopeConfig?.placeholder ?? placeholder
+
+    function handleScopeChange(scopeKey) {
+        if (activeScope === undefined) {
+            setInternalScope(scopeKey)
+        }
+
+        onScopeChange?.(scopeKey)
+    }
 
     return (
         <div className={`search-bar${compact ? ' search-bar--compact' : ''}`}>
@@ -22,10 +38,11 @@ function SearchBar({
                 <div className="search-bar__scopes" aria-label="Val för sökning">
                     {scopes.map((scope) => (
                         <button
-                            key={scope.label}
-                            className={`search-bar__scope${activeScope === scope.label ? ' is-active' : ''}`}
+                            key={scope.key ?? scope.label}
+                            aria-pressed={selectedScope === (scope.key ?? scope.label)}
+                            className={`search-bar__scope${selectedScope === (scope.key ?? scope.label) ? ' is-active' : ''}`}
                             type="button"
-                            onClick={() => setActiveScope(scope.label)}
+                            onClick={() => handleScopeChange(scope.key ?? scope.label)}
                         >
                             {scope.label}
                         </button>
@@ -38,7 +55,10 @@ function SearchBar({
                     <span className="search-bar__label">{label}</span>
                     <div className="search-bar__input-shell">
                         <span className="search-bar__input-icon" aria-hidden="true">
-                            ?
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                                <circle cx="11" cy="11" r="6.5" />
+                                <path d="M16 16L21 21" strokeLinecap="round" />
+                            </svg>
                         </span>
                         <input
                             className="search-bar__input"
