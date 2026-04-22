@@ -11,6 +11,7 @@ function HomePage() {
     const [categories, setCategories] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
+    const [searchScope, setSearchScope] = useState('Recept')
 
     useEffect(() => {
         async function loadHomePageData() {
@@ -43,24 +44,24 @@ function HomePage() {
     }, [recipes])
 
     const filteredRecipes = useMemo(() => {
-        if (!normalizedQuery) return recipes
+    if (!normalizedQuery) return recipes
 
-        return recipes.filter((recipe) => {
-            const searchableText = [
-                recipe.title,
-                recipe.description,
-                ...(recipe.categories || []),
-                ...(recipe.instructions || []),
-                ...(recipe.ingredients || []).map(
-                    (ingredient) => `${ingredient.name} ${ingredient.amount} ${ingredient.unit}`
-                ),
-            ]
-                .join(' ')
-                .toLowerCase()
+    return recipes.filter((recipe) => {
+        if (searchScope === 'Recept') {
+            return recipe.title?.toLowerCase().includes(normalizedQuery)
+        }
 
-            return searchableText.includes(normalizedQuery)
-        })
-    }, [recipes, normalizedQuery])
+        if (searchScope === 'Ingredienser') {
+            return (recipe.ingredients || []).some((ingredient) =>
+                `${ingredient.name} ${ingredient.amount ?? ''} ${ingredient.unit ?? ''}`
+                    .toLowerCase()
+                    .includes(normalizedQuery)
+            )
+        }
+
+        return true
+    })
+}, [recipes, normalizedQuery, searchScope])
 
     const editorialHighlight = featuredRecipes[1] || featuredRecipes[0]
 
@@ -84,6 +85,8 @@ function HomePage() {
                 searchValue={query}
                 onSearchChange={setQuery}
                 categories={categories}
+                searchScope={searchScope}
+                onSearchScopeChange={setSearchScope}
             />
 
             <FeaturedShowcase recipes={featuredRecipes} />
