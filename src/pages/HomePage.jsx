@@ -4,7 +4,7 @@ import FeaturedShowcase from '../components/FeaturedShowcase'
 import Hero from '../components/Hero'
 import RecipeGrid from '../components/RecipeGrid'
 import { getRecipes } from '../api/recipes'
-import { buildEditorialCategories, filterRecipesBySearch } from '../config/categories'
+import { buildEditorialCategories } from '../config/categories'
 
 function HomePage() {
     const [query, setQuery] = useState('')
@@ -32,6 +32,8 @@ function HomePage() {
         loadHomePageData()
     }, [])
 
+    const normalizedQuery = query.trim().toLowerCase()
+
     const categories = useMemo(() => {
         return buildEditorialCategories(recipes)
     }, [recipes])
@@ -45,24 +47,32 @@ function HomePage() {
     }, [categories])
 
     const filteredRecipes = useMemo(() => {
-    if (!normalizedQuery) return recipes
+        if (!normalizedQuery) return recipes
 
-    return recipes.filter((recipe) => {
-        if (searchScope === 'Recept') {
-            return recipe.title?.toLowerCase().includes(normalizedQuery)
-        }
-
-        if (searchScope === 'Ingredienser') {
-            return (recipe.ingredients || []).some((ingredient) =>
-                `${ingredient.name} ${ingredient.amount ?? ''} ${ingredient.unit ?? ''}`
+        return recipes.filter((recipe) => {
+            if (searchScope === 'Recept') {
+                const searchableText = [
+                    recipe.title,
+                    recipe.description,
+                    ...(recipe.categories || []),
+                ]
+                    .join(' ')
                     .toLowerCase()
-                    .includes(normalizedQuery)
-            )
-        }
 
-        return true
-    })
-}, [recipes, normalizedQuery, searchScope])
+                return searchableText.includes(normalizedQuery)
+            }
+
+            if (searchScope === 'Ingredienser') {
+                return (recipe.ingredients || []).some((ingredient) =>
+                    `${ingredient.name} ${ingredient.amount ?? ''} ${ingredient.unit ?? ''}`
+                        .toLowerCase()
+                        .includes(normalizedQuery)
+                )
+            }
+
+            return true
+        })
+    }, [recipes, normalizedQuery, searchScope])
 
     const editorialHighlight = featuredRecipes[1] || featuredRecipes[0]
 
@@ -133,11 +143,11 @@ function HomePage() {
             />
 
             <RecipeGrid
-                eyebrow={query.trim() ? 'Sökresultat' : 'Fler recept'}
-                title={query.trim() ? `Träffar för "${query}"` : 'Fler italienska favoriter'}
+                eyebrow={normalizedQuery ? 'Sökresultat' : 'Fler recept'}
+                title={normalizedQuery ? `Träffar för "${query}"` : 'Fler italienska favoriter'}
                 description={
-                    query.trim()
-                        ? 'Sökningen matchar nu recepttitlar, ingredienser och kategoriord så att resultatet känns mer användbart redan innan den slutliga API-integrationen.'
+                    normalizedQuery
+                        ? 'Sökningen matchar nu recepttitlar, ingredienser och kategoriord så att resultatet känns mer användbart.'
                         : 'Ett bredare receptflöde för att testa receptkort, rytm och responsivitet över flera typer av rätter.'
                 }
                 recipes={filteredRecipes}
