@@ -7,6 +7,7 @@ import RatingStars from '../components/RatingStars'
 import RecipeGrid from '../components/RecipeGrid'
 import RecipeMeta from '../components/RecipeMeta'
 import { getRecipeById, getRelatedRecipes } from '../api/recipes'
+import { getPrimaryCategoryForRecipe, getUiCategoryLabels } from '../config/categories'
 
 function RecipePage() {
     const { id } = useParams()
@@ -72,18 +73,19 @@ function RecipePage() {
         )
     }
 
-    const primaryCategory = recipe.categories?.[0]
-    const categorySlug = primaryCategory?.toLowerCase().replace(/\s+/g, '-')
+    const primaryCategory = getPrimaryCategoryForRecipe(recipe)
+    const categorySlug = primaryCategory?.slug
     const reviewCount = recipe.avgRating ? 1 : 0
+    const categoryLabels = getUiCategoryLabels(recipe)
 
     return (
         <>
             <section className="section recipe-hero">
                 <div className="container recipe-hero__grid">
                     <div className="recipe-hero__content">
-                        {primaryCategory && (
+                        {primaryCategory?.name && (
                             <Link className="back-link" to={`/category/${categorySlug}`}>
-                                Tillbaka till {primaryCategory.toLowerCase()}
+                                Tillbaka till {primaryCategory.name.toLowerCase()}
                             </Link>
                         )}
 
@@ -99,7 +101,7 @@ function RecipePage() {
                         />
 
                         <div className="tag-list">
-                            {(recipe.categories || []).map((tag) => (
+                            {categoryLabels.map((tag) => (
                                 <span className="tag-list__item" key={tag}>
                                     {tag}
                                 </span>
@@ -126,7 +128,7 @@ function RecipePage() {
                         <div className="detail-list">
                             <div className="detail-list__item">
                                 <span className="detail-list__label">Kategori</span>
-                                <span className="detail-list__value">{primaryCategory || 'Okänd'}</span>
+                                <span className="detail-list__value">{primaryCategory?.name || 'Okänd'}</span>
                             </div>
                             <div className="detail-list__item">
                                 <span className="detail-list__label">Pris</span>
