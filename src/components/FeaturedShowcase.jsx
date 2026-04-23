@@ -1,5 +1,6 @@
 
 import { Link } from 'react-router-dom'
+import { getPrimaryCategoryForRecipe } from '../config/categories'
 import RecipeMeta from './RecipeMeta'
 
 function FeaturedShowcase({ recipes }) {
@@ -36,7 +37,7 @@ function FeaturedShowcase({ recipes }) {
                     <div className="featured-showcase__lead-media">
                         <img
                             className="featured-showcase__lead-image"
-                            src={leadRecipe.image}
+                            src={leadRecipe.imageUrl || leadRecipe.image}
                             alt={leadRecipe.title}
                         />
                     </div>
@@ -62,9 +63,15 @@ function FeaturedShowcase({ recipes }) {
                 <div className="featured-showcase__stack">
                     {supportingRecipes.map((recipe) => (
                         <Link className="featured-showcase__item" key={recipe.id} to={`/recipe/${recipe.id}`}>
-                            <img className="featured-showcase__item-image" src={recipe.image} alt={recipe.title} />
+                            <img
+                                className="featured-showcase__item-image"
+                                src={recipe.imageUrl || recipe.image}
+                                alt={recipe.title}
+                            />
                             <div className="featured-showcase__item-body">
-                                <span className="featured-showcase__item-category">{recipe.categoryLabel}</span>
+                                <span className="featured-showcase__item-category">
+                                    {recipe.categoryLabel || getPrimaryCategoryForRecipe(recipe)?.name}
+                                </span>
                                 <h3 className="featured-showcase__item-title">{recipe.title}</h3>
                                 <p className="featured-showcase__item-text">{recipe.excerpt}</p>
                                 <div className="featured-showcase__item-meta">

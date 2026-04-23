@@ -1,22 +1,26 @@
 import { Link } from 'react-router-dom'
+import { getPrimaryCategoryForRecipe, getUiCategoryLabels } from '../config/categories'
 import RecipeMeta from './RecipeMeta'
 
-function RecipeCard({ recipe }) {
+function RecipeCard({ recipe, variant = 'default', categoryLabelOverride = '' }) {
     const rating = Number(recipe?.rating ?? recipe?.avgRating ?? 0)
     const image = recipe?.imageUrl || recipe?.image
-    const categoryLabel = recipe?.categoryLabel || recipe?.categories?.[0] || 'Okänd kategori'
+    const primaryCategory = getPrimaryCategoryForRecipe(recipe)
+    const categoryLabel =
+        categoryLabelOverride || recipe?.categoryLabel || primaryCategory?.name || 'Okänd kategori'
     const excerpt = recipe?.excerpt || recipe?.description || ''
-    const tags = recipe?.tags || recipe?.categories || []
+    const tags = recipe?.tags?.length ? recipe.tags : getUiCategoryLabels(recipe)
     const location = recipe?.location || 'Ricetta'
     const time = recipe?.time || `${recipe?.timeInMins ?? '-'} min`
     const difficulty = recipe?.difficulty || '-'
     const servings = recipe?.servings || '-'
     const reviewCount = recipe?.reviewCount ?? 0
+    const cardClassName = `recipe-card${variant !== 'default' ? ` recipe-card--${variant}` : ''}`
 
     return (
-        <article className="recipe-card">
+        <article className={cardClassName}>
             <Link className="recipe-card__image-wrap" to={`/recipe/${recipe.id}`}>
-                <img className="recipe-card__image" src={image} alt={recipe.title} />
+                <img className="recipe-card__image" src={image} alt={recipe.title} loading="lazy" />
                 <span className="recipe-card__category">{categoryLabel}</span>
                 <span className="recipe-card__rating">{rating.toFixed(1)}</span>
             </Link>

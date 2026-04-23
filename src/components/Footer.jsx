@@ -1,55 +1,31 @@
-import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { getCategories } from '../api/recipes'
 
 function Footer() {
-    const [categories, setCategories] = useState([])
-    const [error, setError] = useState('')
-
-    useEffect(() => {
-        async function loadCategories() {
-            try {
-                const data = await getCategories()
-                setCategories(data)
-            } catch (err) {
-                setError('Kunde inte hämta kategorier.')
-                console.error(err)
-            }
-        }
-
-        loadCategories()
-    }, [])
-
     return (
         <footer className="footer">
             <div className="container footer__inner">
-                <div className="footer__top">
+                <div className="footer__main">
                     <div className="footer__brand">
                         <p className="eyebrow">Ricetta</p>
-                        <h2>Italienska recept med varm premiumkänsla och tydlig redaktionell ton.</h2>
+                        <h2>En varm journal för italienska smaker, långsamma såser och generösa middagar.</h2>
                         <p>
-                            Byggd som grundstruktur för Ricettas skolarbete, med riktig receptdata från API:t
-                            som nästa steg i utvecklingen.
+                            Ricetta samlar recept som känns inbjudande, eleganta och lätta att återvända till
+                            när du vill laga något italienskt med lite mer känsla.
                         </p>
                     </div>
 
-                    <div className="footer__links" aria-label="Sidfotens länkar">
-                        {categories.map((category) => (
-                            <Link
-                                key={category.slug}
-                                className="footer__link"
-                                to={`/category/${category.slug}`}
-                            >
-                                {category.name}
-                            </Link>
-                        ))}
-
-                        {error && <p className="footer__error">{error}</p>}
-                    </div>
+                    <nav className="footer__nav" aria-label="Sidfotens länkar">
+                        <Link className="footer__link" to="/">
+                            Hem
+                        </Link>
+                        <Link className="footer__link" to="/categories">
+                            Alla kategorier
+                        </Link>
+                    </nav>
                 </div>
 
                 <div className="footer__bottom">
-                    <span>Utvecklad lokalt för kursprojektet med data från API.</span>
+                    <span>För dig som vill hitta nästa italienska favorit med lite mer matlust och rytm.</span>
                     <span>Ricetta &copy; {new Date().getFullYear()}</span>
                 </div>
             </div>

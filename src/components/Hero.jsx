@@ -63,9 +63,9 @@ function Hero({
                             <span className="button button--disabled">Se veckans recept</span>
                         )}
 
-                        <a className="button button--secondary" href="#categories">
+                        <Link className="button button--secondary" to="/categories">
                             Utforska kategorier
-                        </a>
+                        </Link>
                     </div>
 
                     <div className="hero__feature-list">
