@@ -11,6 +11,7 @@ function HomePage() {
     const [recipes, setRecipes] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
+    const [searchScope, setSearchScope] = useState('Recept')
 
     useEffect(() => {
         async function loadHomePageData() {
@@ -44,8 +45,24 @@ function HomePage() {
     }, [categories])
 
     const filteredRecipes = useMemo(() => {
-        return filterRecipesBySearch(recipes, query, 'all')
-    }, [recipes, query])
+    if (!normalizedQuery) return recipes
+
+    return recipes.filter((recipe) => {
+        if (searchScope === 'Recept') {
+            return recipe.title?.toLowerCase().includes(normalizedQuery)
+        }
+
+        if (searchScope === 'Ingredienser') {
+            return (recipe.ingredients || []).some((ingredient) =>
+                `${ingredient.name} ${ingredient.amount ?? ''} ${ingredient.unit ?? ''}`
+                    .toLowerCase()
+                    .includes(normalizedQuery)
+            )
+        }
+
+        return true
+    })
+}, [recipes, normalizedQuery, searchScope])
 
     const editorialHighlight = featuredRecipes[1] || featuredRecipes[0]
 
@@ -69,6 +86,8 @@ function HomePage() {
                 searchValue={query}
                 onSearchChange={setQuery}
                 categories={categories}
+                searchScope={searchScope}
+                onSearchScopeChange={setSearchScope}
             />
 
             <FeaturedShowcase recipes={featuredRecipes} />

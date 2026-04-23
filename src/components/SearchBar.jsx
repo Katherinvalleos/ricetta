@@ -5,6 +5,8 @@ function SearchBar({
     value,
     onChange,
     label = 'Sök recept',
+    activeScope,
+    onScopeChange,
     placeholder = 'Sök på recept, ingrediens eller känsla',
     compact = false,
     buttonLabel = 'Sök',
@@ -13,14 +15,6 @@ function SearchBar({
     activeScope,
     onScopeChange,
 }) {
-    const firstScopeKey = scopes[0]?.key ?? scopes[0]?.label ?? ''
-    const [internalScope, setInternalScope] = useState(firstScopeKey)
-
-    const selectedScope = activeScope ?? internalScope
-
-    const activeScopeConfig = useMemo(() => {
-        return scopes.find((scope) => (scope.key ?? scope.label) === selectedScope) ?? scopes[0]
-    }, [scopes, selectedScope])
 
     const resolvedPlaceholder = activeScopeConfig?.placeholder ?? placeholder
 
@@ -42,7 +36,7 @@ function SearchBar({
                             aria-pressed={selectedScope === (scope.key ?? scope.label)}
                             className={`search-bar__scope${selectedScope === (scope.key ?? scope.label) ? ' is-active' : ''}`}
                             type="button"
-                            onClick={() => handleScopeChange(scope.key ?? scope.label)}
+                            onClick={() => onScopeChange(scope.label)}
                         >
                             {scope.label}
                         </button>
