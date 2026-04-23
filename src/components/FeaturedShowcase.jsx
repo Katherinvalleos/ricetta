@@ -1,9 +1,8 @@
-
 import { Link } from 'react-router-dom'
 import { getPrimaryCategoryForRecipe } from '../config/categories'
 import RecipeMeta from './RecipeMeta'
 
-function FeaturedShowcase({ recipes }) {
+function FeaturedShowcase({ recipes = [] }) {
     const [leadRecipe, ...supportingRecipes] = recipes
 
     if (!leadRecipe) {
@@ -44,15 +43,17 @@ function FeaturedShowcase({ recipes }) {
                     <div className="featured-showcase__lead-content">
                         <span className="featured-showcase__label">Veckans favorit</span>
                         <h3 className="featured-showcase__lead-title">{leadRecipe.title}</h3>
-                        <p className="featured-showcase__lead-text">{leadRecipe.description}</p>
+                        <p className="featured-showcase__lead-text">
+                            {leadRecipe.description || leadRecipe.excerpt}
+                        </p>
                         <RecipeMeta
                             className="featured-showcase__meta"
-                            time={leadRecipe.time}
-                            difficulty={leadRecipe.difficulty}
-                            servings={leadRecipe.servings}
+                            time={leadRecipe.time || `${leadRecipe.timeInMins ?? '-'} min`}
+                            difficulty={leadRecipe.difficulty || '-'}
+                            servings={leadRecipe.servings || '-'}
                         />
                         <div className="featured-showcase__lead-footer">
-                            <span>{leadRecipe.reviewCount} omdömen i testdatan</span>
+                            <span>{leadRecipe.reviewCount ?? 0} omdömen</span>
                             <Link className="button" to={`/recipe/${leadRecipe.id}`}>
                                 Läs receptet
                             </Link>
@@ -73,10 +74,12 @@ function FeaturedShowcase({ recipes }) {
                                     {recipe.categoryLabel || getPrimaryCategoryForRecipe(recipe)?.name}
                                 </span>
                                 <h3 className="featured-showcase__item-title">{recipe.title}</h3>
-                                <p className="featured-showcase__item-text">{recipe.excerpt}</p>
+                                <p className="featured-showcase__item-text">
+                                    {recipe.excerpt || recipe.description}
+                                </p>
                                 <div className="featured-showcase__item-meta">
-                                    <span>{recipe.time}</span>
-                                    <span>{recipe.difficulty}</span>
+                                    <span>{recipe.time || `${recipe.timeInMins ?? '-'} min`}</span>
+                                    <span>{recipe.difficulty || '-'}</span>
                                 </div>
                             </div>
                         </Link>
