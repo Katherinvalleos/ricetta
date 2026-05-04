@@ -8,6 +8,8 @@ function Hero({
     searchValue,
     onSearchChange,
     categories = [],
+    searchScope,
+    onSearchScopeChange
 }) {
     const safeFeaturedRecipe = featuredRecipe ?? null
     const safeSecondaryRecipe = secondaryRecipe ?? null
@@ -32,6 +34,8 @@ function Hero({
                             value={searchValue}
                             onChange={onSearchChange}
                             label="Sök recept"
+                            activeScope={searchScope}
+                            onScopeChange={onSearchScopeChange}
                             scopes={[
                                 {
                                     label: 'Recept',
