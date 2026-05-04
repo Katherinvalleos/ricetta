@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom'
 import { getPrimaryCategoryForRecipe, getUiCategoryLabels } from '../config/categories'
+import { formatAverageRating, getAverageRatingValue } from '../utils/ratings'
 import RecipeMeta from './RecipeMeta'
 
 function RecipeCard({ recipe, variant = 'default', categoryLabelOverride = '' }) {
-    const rating = Number(recipe?.rating ?? recipe?.avgRating ?? 0)
+    const rating = getAverageRatingValue(recipe?.rating ?? recipe?.avgRating)
     const image = recipe?.imageUrl || recipe?.image
     const primaryCategory = getPrimaryCategoryForRecipe(recipe)
     const categoryLabel =
@@ -22,7 +23,7 @@ function RecipeCard({ recipe, variant = 'default', categoryLabelOverride = '' })
             <Link className="recipe-card__image-wrap" to={`/recipe/${recipe.id}`}>
                 <img className="recipe-card__image" src={image} alt={recipe.title} loading="lazy" />
                 <span className="recipe-card__category">{categoryLabel}</span>
-                <span className="recipe-card__rating">{rating.toFixed(1)}</span>
+                <span className="recipe-card__rating">{formatAverageRating(rating, 'Nytt')}</span>
             </Link>
 
             <div className="recipe-card__body">

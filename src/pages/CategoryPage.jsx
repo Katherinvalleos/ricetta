@@ -160,7 +160,6 @@ function CategoryPage() {
                                 activeScope={searchScope}
                                 onScopeChange={setSearchScope}
                                 label={`Sök inom ${categoryLabel}`}
-                                buttonLabel="Filtrera"
                                 scopes={[
                                     {
                                         key: 'recipes',
