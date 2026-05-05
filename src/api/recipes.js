@@ -1,12 +1,12 @@
-const BASE_URL = "https://lexicon26-1.reky.se";
+const BASE_URL = 'https://lexicon26-1.reky.se'
 
 function slugify(text) {
     return text
         ?.toLowerCase()
         .trim()
-        .replace(/\s+/g, "-")
-        .replace(/[Â‰]/g, "a")
-        .replace(/ˆ/g, "o");
+        .replace(/\s+/g, '-')
+        .replace(/[√•√§]/g, 'a')
+        .replace(/√∂/g, 'o')
 }
 
 function normalizeRecipe(recipe) {
@@ -15,71 +15,71 @@ function normalizeRecipe(recipe) {
         id: recipe._id,
         slug: slugify(recipe.title),
         avgRating: recipe.avgRating ?? 0,
-    };
+    }
 }
 
 export async function getRecipes() {
-    const res = await fetch(`${BASE_URL}/recipes`);
+    const res = await fetch(`${BASE_URL}/recipes`)
 
     if (!res.ok) {
-        throw new Error("Kunde inte h‰mta recept");
+        throw new Error('Kunde inte h√§mta recept')
     }
 
-    const data = await res.json();
-    return data.map(normalizeRecipe);
+    const data = await res.json()
+    return data.map(normalizeRecipe)
 }
 
 export async function getRecipeById(recipeId) {
-    const res = await fetch(`${BASE_URL}/recipes/${recipeId}`);
+    const res = await fetch(`${BASE_URL}/recipes/${recipeId}`)
 
     if (!res.ok) {
-        throw new Error("Kunde inte h‰mta receptet");
+        throw new Error('Kunde inte h√§mta receptet')
     }
 
-    const data = await res.json();
-    return normalizeRecipe(data);
+    const data = await res.json()
+    return normalizeRecipe(data)
 }
 
 export async function getRecipeBySlug(slug) {
-    const recipes = await getRecipes();
-    return recipes.find((recipe) => recipe.slug === slug) || null;
+    const recipes = await getRecipes()
+    return recipes.find((recipe) => recipe.slug === slug) || null
 }
 
 export async function getRecipesByCategory(category) {
-    const recipes = await getRecipes();
+    const recipes = await getRecipes()
 
     return recipes.filter((recipe) =>
         recipe.categories?.some(
             (recipeCategory) => slugify(recipeCategory) === slugify(category)
         )
-    );
+    )
 }
 
 export async function getCategories() {
-    const recipes = await getRecipes();
-    const categoryMap = new Map();
+    const recipes = await getRecipes()
+    const categoryMap = new Map()
 
     recipes.forEach((recipe) => {
         recipe.categories?.forEach((category) => {
-            const slug = slugify(category);
+            const slug = slugify(category)
 
             if (!categoryMap.has(slug)) {
                 categoryMap.set(slug, {
                     slug,
                     name: category,
                     recipeCount: 0,
-                });
+                })
             }
 
-            categoryMap.get(slug).recipeCount += 1;
-        });
-    });
+            categoryMap.get(slug).recipeCount += 1
+        })
+    })
 
-    return Array.from(categoryMap.values());
+    return Array.from(categoryMap.values())
 }
 
 export async function getRelatedRecipes(recipeId, category) {
-    const recipes = await getRecipes();
+    const recipes = await getRecipes()
 
     return recipes
         .filter(
@@ -89,5 +89,40 @@ export async function getRelatedRecipes(recipeId, category) {
                     (recipeCategory) => slugify(recipeCategory) === slugify(category)
                 )
         )
-        .slice(0, 3);
+        .slice(0, 3)
+}
+
+export async function getCommentsByRecipeId(recipeId) {
+    const res = await fetch(`${BASE_URL}/recipes/${recipeId}/comments`)
+
+    if (!res.ok) {
+        throw new Error('Kunde inte h√§mta kommentarer')
+    }
+
+    return res.json()
+}
+
+export async function createComment(recipeId, comment) {
+    const res = await fetch(`${BASE_URL}/recipes/${recipeId}/comments`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(comment),
+    })
+
+    const responseText = await res.text()
+
+    if (!res.ok) {
+        console.error('POST comment failed:', {
+            status: res.status,
+            responseText,
+            recipeId,
+            comment,
+        })
+
+        throw new Error('Kunde inte spara kommentaren')
+    }
+
+    return responseText ? JSON.parse(responseText) : comment
 }

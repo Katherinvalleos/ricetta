@@ -1,41 +1,68 @@
-
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { createComment, getCommentsByRecipeId } from '../api/recipes'
 
 const initialFormState = {
     name: '',
     comment: '',
 }
 
-function CommentSection({ comments: initialComments }) {
-    const [comments, setComments] = useState(initialComments)
+function CommentSection({ recipeId }) {
+    const [comments, setComments] = useState([])
     const [form, setForm] = useState(initialFormState)
     const [status, setStatus] = useState('')
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        async function loadComments() {
+            try {
+                setLoading(true)
+                const data = await getCommentsByRecipeId(recipeId)
+                setComments(data)
+            } catch (err) {
+                setStatus('Kunde inte hÃ¤mta kommentarer.')
+                console.error(err)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        if (recipeId) {
+            loadComments()
+        }
+    }, [recipeId])
 
     function handleChange(event) {
         const { name, value } = event.target
+
         setForm((currentForm) => ({
             ...currentForm,
             [name]: value,
         }))
     }
 
-    function handleSubmit(event) {
+    async function handleSubmit(event) {
         event.preventDefault()
 
         if (!form.name.trim() || !form.comment.trim()) {
-            setStatus('Fyll i både namn och kommentar för att visa ett lokalt inlägg.')
+            setStatus('Fyll i bÃ¥de namn och kommentar.')
             return
         }
 
-        const previewComment = {
+        const newComment = {
+            comment: form.comment.trim(),
             name: form.name.trim(),
-            date: 'Precis nu',
-            text: form.comment.trim(),
         }
 
-        setComments((currentComments) => [previewComment, ...currentComments])
-        setForm(initialFormState)
-        setStatus('Kommentaren lades till lokalt för att färhandsvisa gränssnittet.')
+        try {
+            const savedComment = await createComment(recipeId, newComment)
+
+            setComments((currentComments) => [savedComment, ...currentComments])
+            setForm(initialFormState)
+            setStatus('Kommentaren sparades.')
+        } catch (err) {
+            setStatus('Kunde inte spara kommentaren.')
+            console.error(err)
+        }
     }
 
     return (
@@ -43,25 +70,37 @@ function CommentSection({ comments: initialComments }) {
             <div className="section-heading section-heading--compact">
                 <div className="section-heading__content">
                     <p className="section-heading__eyebrow">Kommentarer</p>
-                    <h2 className="section-heading__title">Vad säger andra?</h2>
+                    <h2 className="section-heading__title">Vad sÃ¤ger andra?</h2>
                     <p className="section-heading__description">
-                        Formuläret är bara till för gränssnittet just nu och sparar nya kommentarer lokalt i
-                        sidan.
+                        LÃ¤s och lÃ¤mna kommentarer kopplade till receptet.
                     </p>
                 </div>
             </div>
 
-            <div className="comment-list">
-                {comments.map((comment, index) => (
-                    <article className="comment-card" key={`${comment.name}-${comment.date}-${index}`}>
-                        <div className="comment-card__header">
-                            <strong className="comment-card__name">{comment.name}</strong>
-                            <span className="comment-card__date">{comment.date}</span>
-                        </div>
-                        <p>{comment.text}</p>
-                    </article>
-                ))}
-            </div>
+            {loading ? (
+                <p>Laddar kommentarer...</p>
+            ) : (
+                <div className="comment-list">
+                    {comments.length > 0 ? (
+                        comments.map((comment, index) => (
+                            <article
+                                className="comment-card"
+                                key={comment._id || `${comment.name}-${index}`}
+                            >
+                                <div className="comment-card__header">
+                                    <strong className="comment-card__name">{comment.name}</strong>
+                                    <span className="comment-card__date">
+                                        {comment.date || 'Nyligen'}
+                                    </span>
+                                </div>
+                                <p>{comment.text || comment.comment}</p>
+                            </article>
+                        ))
+                    ) : (
+                        <p>Inga kommentarer Ã¤nnu.</p>
+                    )}
+                </div>
+            )}
 
             <form className="comment-form" onSubmit={handleSubmit}>
                 <div className="comment-form__row">
@@ -85,7 +124,7 @@ function CommentSection({ comments: initialComments }) {
                             value={form.comment}
                             onChange={handleChange}
                             rows="4"
-                            placeholder="Skriv en kort tanke om smak, uppläggning eller vad du skulle justera."
+                            placeholder="Skriv en kort kommentar om receptet."
                         />
                     </label>
                 </div>
