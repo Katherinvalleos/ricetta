@@ -1,12 +1,14 @@
-const BASE_URL = 'https://lexicon26-1.reky.se'
+import { isValidRecipeRating } from "../utils/ratings";
+
+const BASE_URL = "https://lexicon26-1.reky.se";
 
 function slugify(text) {
     return text
         ?.toLowerCase()
         .trim()
-        .replace(/\s+/g, '-')
-        .replace(/[åä]/g, 'a')
-        .replace(/ö/g, 'o')
+        .replace(/\s+/g, "-")
+        .replace(/[åä]/g, "a")
+        .replace(/ö/g, "o");
 }
 
 function normalizeRecipe(recipe) {
@@ -14,15 +16,33 @@ function normalizeRecipe(recipe) {
         ...recipe,
         id: recipe._id,
         slug: slugify(recipe.title),
-        avgRating: recipe.avgRating ?? 0,
+        avgRating: recipe.avgRating ?? null,
+    };
+}
+
+function parseRatingResponse(data) {
+    if (!data || typeof data !== "object") {
+        return null;
     }
+
+    if (data._id) {
+        return normalizeRecipe(data);
+    }
+
+    if (typeof data.avgRating === "number" || data.avgRating === null) {
+        return {
+            avgRating: data.avgRating,
+        };
+    }
+
+    return null;
 }
 
 export async function getRecipes() {
     const res = await fetch(`${BASE_URL}/recipes`)
 
     if (!res.ok) {
-        throw new Error('Kunde inte hämta recept')
+        throw new Error("Kunde inte hämta recept");
     }
 
     const data = await res.json()
@@ -33,11 +53,43 @@ export async function getRecipeById(recipeId) {
     const res = await fetch(`${BASE_URL}/recipes/${recipeId}`)
 
     if (!res.ok) {
-        throw new Error('Kunde inte hämta receptet')
+        throw new Error("Kunde inte hämta receptet");
     }
 
     const data = await res.json()
     return normalizeRecipe(data)
+}
+
+export async function postRecipeRating(recipeId, rating) {
+    const numericRating = Number(rating);
+
+    if (!isValidRecipeRating(numericRating)) {
+        throw new Error("Betyget måste vara ett heltal mellan 1 och 5");
+    }
+
+    const res = await fetch(`${BASE_URL}/recipes/${recipeId}/ratings`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ rating: numericRating }),
+    });
+
+    if (!res.ok) {
+        throw new Error("Kunde inte spara betyget");
+    }
+
+    const text = await res.text();
+
+    if (!text) {
+        return null;
+    }
+
+    try {
+        return parseRatingResponse(JSON.parse(text));
+    } catch {
+        return null;
+    }
 }
 
 export async function getRecipeBySlug(slug) {

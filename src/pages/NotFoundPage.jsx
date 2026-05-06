@@ -6,8 +6,8 @@ function NotFoundPage() {
         <section className="section container">
             <div className="empty-state">
                 <p className="section-heading__eyebrow">404</p>
-                <h1>Den sidan finns inte pÂ menyn.</h1>
-                <p>GÂ tillbaka till startsidan och prova en annan v‰g genom receptsamlingen.</p>
+                <h1>Den sidan finns inte p√• menyn.</h1>
+                <p>G√• tillbaka till startsidan och prova en annan v√§g genom receptsamlingen.</p>
                 <Link className="button" to="/">
                     Till startsidan
                 </Link>

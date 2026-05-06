@@ -8,6 +8,8 @@ function Hero({
     searchValue,
     onSearchChange,
     categories = [],
+    searchScope,
+    onSearchScopeChange
 }) {
     const safeFeaturedRecipe = featuredRecipe ?? null
     const safeSecondaryRecipe = secondaryRecipe ?? null
@@ -32,6 +34,8 @@ function Hero({
                             value={searchValue}
                             onChange={onSearchChange}
                             label="Sök recept"
+                            activeScope={searchScope}
+                            onScopeChange={onSearchScopeChange}
                             scopes={[
                                 {
                                     label: 'Recept',
@@ -59,9 +63,9 @@ function Hero({
                             <span className="button button--disabled">Se veckans recept</span>
                         )}
 
-                        <a className="button button--secondary" href="#categories">
+                        <Link className="button button--secondary" to="/categories">
                             Utforska kategorier
-                        </a>
+                        </Link>
                     </div>
 
                     <div className="hero__feature-list">

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { getPrimaryCategoryForRecipe } from '../config/categories'
 import RecipeMeta from './RecipeMeta'
 
 function FeaturedShowcase({ recipes = [] }) {
@@ -70,7 +71,7 @@ function FeaturedShowcase({ recipes = [] }) {
                             />
                             <div className="featured-showcase__item-body">
                                 <span className="featured-showcase__item-category">
-                                    {recipe.categoryLabel || recipe.categories?.[0] || 'Kategori'}
+                                    {recipe.categoryLabel || getPrimaryCategoryForRecipe(recipe)?.name}
                                 </span>
                                 <h3 className="featured-showcase__item-title">{recipe.title}</h3>
                                 <p className="featured-showcase__item-text">
