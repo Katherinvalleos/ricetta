@@ -1,6 +1,3 @@
-
-import { useState } from 'react'
-
 function SearchBar({
     value,
     onChange,
@@ -9,7 +6,6 @@ function SearchBar({
     onScopeChange,
     placeholder = 'Sök på recept, ingrediens eller känsla',
     compact = false,
-    buttonLabel = 'Sök',
     scopes = [],
     helperText = '',
 }) {
@@ -50,10 +46,6 @@ function SearchBar({
                         />
                     </div>
                 </label>
-
-                <button className="search-bar__button" type="button">
-                    {buttonLabel}
-                </button>
             </div>
 
             {helperText ? <p className="search-bar__hint">{helperText}</p> : null}

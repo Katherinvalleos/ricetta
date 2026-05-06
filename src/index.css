@@ -631,16 +631,14 @@ img {
     box-shadow: var(--shadow-sm);
 }
 
-.search-bar__scope:focus-visible,
-.search-bar__button:focus-visible {
+.search-bar__scope:focus-visible {
     outline: none;
     box-shadow: 0 0 0 4px rgba(180, 83, 52, 0.12);
 }
 
 .search-bar__row {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 0.75rem;
+    grid-template-columns: minmax(0, 1fr);
     align-items: end;
 }
 
@@ -737,19 +735,6 @@ img {
 .search-bar__input:focus {
     box-shadow: none;
     background: transparent;
-}
-
-.search-bar__button {
-    align-self: stretch;
-    min-width: 132px;
-    min-height: 64px;
-    padding: 0 1.35rem;
-    border: 0;
-    border-radius: 22px;
-    background: linear-gradient(135deg, var(--surface-dark) 0%, var(--surface-dark-soft) 100%);
-    color: #fbf6ee;
-    font-weight: 700;
-    box-shadow: var(--shadow-sm);
 }
 
 .search-bar--compact {
@@ -1782,6 +1767,13 @@ img {
     font-weight: 800;
 }
 
+.rating-panel__summary {
+    max-width: 52ch;
+    margin: 0.6rem 0 0;
+    color: var(--text-soft);
+    line-height: 1.65;
+}
+
 .rating-stars {
     display: flex;
     gap: 0.65rem;
@@ -1799,6 +1791,11 @@ img {
     color: rgba(180, 83, 52, 0.35);
     font-size: 1.45rem;
     cursor: pointer;
+    transition:
+        border-color 180ms ease,
+        background 180ms ease,
+        color 180ms ease,
+        transform 180ms ease;
 }
 
 .rating-stars__button.is-active {
@@ -1807,12 +1804,33 @@ img {
     background: rgba(255, 239, 196, 0.42);
 }
 
+.rating-stars__button:hover:not(:disabled),
+.rating-stars__button:focus-visible:not(:disabled) {
+    transform: translateY(-2px);
+    border-color: rgba(240, 168, 36, 0.54);
+}
+
+.rating-stars__button:disabled {
+    cursor: wait;
+    opacity: 0.68;
+}
+
 .rating-panel__note,
 .comment-form__status,
 .footer__bottom,
 .comment-card__date {
     color: var(--text-muted);
     font-size: 0.95rem;
+}
+
+.rating-panel__note--success {
+    color: var(--olive);
+    font-weight: 800;
+}
+
+.rating-panel__note--error {
+    color: var(--accent-deep);
+    font-weight: 800;
 }
 
 .comment-card {
@@ -2091,14 +2109,6 @@ img {
     .recipe-grid,
     .category-list {
         grid-template-columns: 1fr;
-    }
-
-    .search-bar__row {
-        grid-template-columns: 1fr;
-    }
-
-    .search-bar__button {
-        width: 100%;
     }
 
     .hero__feature-list {

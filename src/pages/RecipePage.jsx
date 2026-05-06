@@ -6,8 +6,9 @@ import InstructionSteps from '../components/InstructionSteps'
 import RatingStars from '../components/RatingStars'
 import RecipeGrid from '../components/RecipeGrid'
 import RecipeMeta from '../components/RecipeMeta'
-import { getRecipeById, getRelatedRecipes } from '../api/recipes'
+import { getRecipeById, getRelatedRecipes, postRecipeRating } from '../api/recipes'
 import { getPrimaryCategoryForRecipe, getUiCategoryLabels } from '../config/categories'
+import { formatAverageRating, isValidRecipeRating } from '../utils/ratings'
 
 function RecipePage() {
     const { id } = useParams()
@@ -15,12 +16,17 @@ function RecipePage() {
     const [relatedRecipes, setRelatedRecipes] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
+    const [ratingSubmitting, setRatingSubmitting] = useState(false)
+    const [ratingSuccessMessage, setRatingSuccessMessage] = useState('')
+    const [ratingErrorMessage, setRatingErrorMessage] = useState('')
 
     useEffect(() => {
         async function loadRecipePageData() {
             try {
                 setLoading(true)
                 setError('')
+                setRatingSuccessMessage('')
+                setRatingErrorMessage('')
 
                 const recipeData = await getRecipeById(id)
 
@@ -51,6 +57,45 @@ function RecipePage() {
         }
     }, [id])
 
+    async function handleRatingSubmit(rating) {
+        if (ratingSubmitting || !recipe?.id) {
+            return
+        }
+
+        if (!isValidRecipeRating(rating)) {
+            setRatingSuccessMessage('')
+            setRatingErrorMessage('Välj ett betyg mellan 1 och 5.')
+            return
+        }
+
+        try {
+            setRatingSubmitting(true)
+            setRatingSuccessMessage('')
+            setRatingErrorMessage('')
+
+            const ratingResponse = await postRecipeRating(recipe.id, rating)
+
+            if (ratingResponse?.id) {
+                setRecipe(ratingResponse)
+            } else if ('avgRating' in (ratingResponse || {})) {
+                setRecipe((currentRecipe) => ({
+                    ...currentRecipe,
+                    avgRating: ratingResponse.avgRating,
+                }))
+            } else {
+                const refreshedRecipe = await getRecipeById(recipe.id)
+                setRecipe(refreshedRecipe)
+            }
+
+            setRatingSuccessMessage('Tack för ditt betyg!')
+        } catch (err) {
+            setRatingErrorMessage('Betyget kunde inte sparas just nu. Försök igen om en stund.')
+            console.error(err)
+        } finally {
+            setRatingSubmitting(false)
+        }
+    }
+
     if (loading) {
         return <p className="section container">Laddar recept...</p>
     }
@@ -75,7 +120,6 @@ function RecipePage() {
 
     const primaryCategory = getPrimaryCategoryForRecipe(recipe)
     const categorySlug = primaryCategory?.slug
-    const reviewCount = recipe.avgRating ? 1 : 0
     const categoryLabels = getUiCategoryLabels(recipe)
 
     return (
@@ -136,9 +180,7 @@ function RecipePage() {
                             </div>
                             <div className="detail-list__item">
                                 <span className="detail-list__label">Betyg</span>
-                                <span className="detail-list__value">
-                                    {recipe.avgRating ? recipe.avgRating : 'Inga betyg ännu'}
-                                </span>
+                                <span className="detail-list__value">{formatAverageRating(recipe.avgRating)}</span>
                             </div>
                         </div>
                     </div>
@@ -151,7 +193,13 @@ function RecipePage() {
                         <InstructionSteps steps={recipe.instructions} />
                     </section>
 
-                    <RatingStars initialRating={recipe.avgRating || 0} reviewCount={reviewCount} />
+                    <RatingStars
+                        averageRating={recipe.avgRating}
+                        errorMessage={ratingErrorMessage}
+                        isSubmitting={ratingSubmitting}
+                        onSubmitRating={handleRatingSubmit}
+                        successMessage={ratingSuccessMessage}
+                    />
                     <CommentSection comments={[]} />
                 </div>
             </section>
