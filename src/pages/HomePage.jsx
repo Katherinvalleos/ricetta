@@ -100,6 +100,18 @@ function HomePage() {
                 onSearchScopeChange={setSearchScope}
             />
 
+              <RecipeGrid
+                eyebrow={normalizedQuery ? 'Sökresultat' : 'Fler recept'}
+                title={normalizedQuery ? `Träffar för "${query}"` : 'Fler italienska favoriter'}
+                description={
+                    normalizedQuery
+                        ? 'Sökningen matchar nu recepttitlar, ingredienser och kategoriord så att resultatet känns mer användbart.'
+                        : 'Ett bredare receptflöde för att testa receptkort, rytm och responsivitet över flera typer av rätter.'
+                }
+                recipes={filteredRecipes}
+                emptyMessage="Prova en bredare sökning som pasta, skaldjur eller förrätt."
+            />
+
             <FeaturedShowcase recipes={featuredRecipes} />
 
             {editorialHighlight && (
@@ -142,17 +154,7 @@ function HomePage() {
                 actionTo="/categories"
             />
 
-            <RecipeGrid
-                eyebrow={normalizedQuery ? 'Sökresultat' : 'Fler recept'}
-                title={normalizedQuery ? `Träffar för "${query}"` : 'Fler italienska favoriter'}
-                description={
-                    normalizedQuery
-                        ? 'Sökningen matchar nu recepttitlar, ingredienser och kategoriord så att resultatet känns mer användbart.'
-                        : 'Ett bredare receptflöde för att testa receptkort, rytm och responsivitet över flera typer av rätter.'
-                }
-                recipes={filteredRecipes}
-                emptyMessage="Prova en bredare sökning som pasta, skaldjur eller förrätt."
-            />
+          
         </>
     )
 }
