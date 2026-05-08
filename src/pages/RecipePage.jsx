@@ -200,8 +200,7 @@ function RecipePage() {
                         onSubmitRating={handleRatingSubmit}
                         successMessage={ratingSuccessMessage}
                     />
-                    <CommentSection comments={[]} />
-                </div>
+                    <CommentSection recipeId={recipe.id} />                </div>
             </section>
 
             <RecipeGrid
